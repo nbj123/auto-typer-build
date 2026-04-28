@@ -1,0 +1,32 @@
+# .github/workflows/build.yml
+name: Build Python Executable
+
+on:
+  push:                     # 当你推送代码到主分支时自动触发
+
+jobs:
+  build-windows:           # 定义一个名为构建Windows的任务
+    runs-on: windows-latest # 让 GitHub 提供一个 Windows 环境
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --onefile --noconsole auto_type.py
+
+      - name: Upload Windows EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoTyper-Windows
+          path: dist/auto_type.exe
